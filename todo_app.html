@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>To Do List</title>
+</head>
+
+<body>
+    <header class="bg-warning text-white p-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <font face="Comic sans MS" size="11" color="black">
+                        <strong>ToDo List</strong>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-3">
+        <h2>Add Items</h2>
+        <form id="addForm" onsubmit="addTodo(); return false;">
+            <div class="row">
+                <div class="col-lg-7 col-md-7 col-sm-7">
+                    <input type="text" placeholder="Enter your todo" class="form-control" id="todo-input">
+                </div>
+
+                <div class="col-lg-5 col-md-5 col-sm-5">
+                    <button type="submit" class="btn btn-dark">Add</button>
+                </div>
+            </div>
+        </form>
+
+        <h3 class="mt-4">Tasks</h3>
+        <div id="result">
+            <ul id="tasks" class="list-group"></ul>
+        </div>
+    </div>
+
+    <script>
+        function addTodo() {
+            // Get the value from the input field
+            const todoInput = document.getElementById('todo-input');
+            const todoValue = todoInput.value.trim(); // Trim to avoid spaces-only entries
+
+            if (!todoValue.length) {
+                alert('Please enter a todo!');
+                return;
+            }
+
+            // Retrieve tasks from localStorage or initialize an empty array
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            // Add the new task
+            tasks.push(todoValue);
+
+            // Store the updated array back in localStorage
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+
+            // Clear the input field
+            todoInput.value = "";
+
+            // Update the task list display
+            updateTasks();
+        }
+
+        function updateTasks() {
+            // Retrieve tasks from localStorage or initialize as an empty array
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskList = document.getElementById('tasks');
+
+            // Clear the current list
+            taskList.innerHTML = "";
+
+            // Render each task as a list item
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.textContent = task;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = "Delete";
+                deleteBtn.className = "btn btn-danger";
+                deleteBtn.style.borderRadius = '10px';
+
+                // Add event listener to delete the specific task
+                deleteBtn.addEventListener('click', function () {
+                    deleteHandler(index);
+                });
+
+                // Append delete button to the list item
+                li.appendChild(deleteBtn);
+                taskList.appendChild(li);
+            });
+        }
+
+        function deleteHandler(index) {
+            // Retrieve tasks from localStorage or initialize as an empty array
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            // Remove the task at the specified index
+            tasks.splice(index, 1);
+
+            // Update the localStorage with the modified array
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+
+            // Refresh the display
+            updateTasks();
+        }
+
+        // Display tasks when the page loads
+        updateTasks();
+    </script>
+</body>
+
+</html>
